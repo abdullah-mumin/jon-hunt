@@ -1,22 +1,51 @@
 import { Button, Container, Grid, InputAdornment, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import HouseIcon from '@mui/icons-material/House';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SearchArea = () => {
+    const navigate = useNavigate();
+    // const location = useLocation();
 
     const [title, setTitle] = useState('');
     const handleTitleChange = (e) => {
         setTitle(e.target.value);
     };
 
-    const [location, setLocation] = useState('');
+    const [locationInfo, setLocationInfo] = useState('');
     const handleLocationChange = (e) => {
-        setLocation(e.target.value);
+        setLocationInfo(e.target.value);
     };
 
-    const handleSearch = () => {
-        console.log(title);
-        console.log(location);
+    const handleSearch = async (e) => {
+        e.preventDefault();
+        // console.log(title);
+        // console.log(location);
+        navigate(`/jobs`,
+            {
+                state: {
+                    title: title,
+                    locationInfo: locationInfo,
+                }
+            });
+        // const info = {
+        //     'title': title,
+        //     'location': location,
+        // }
+        // try {
+        //     const response = await fetch(`https://talent-hustle-server.vercel.app/search`, {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify(info),
+        //     });
+
+        //     const result = await response.json();
+        //     console.log(result);
+        // } catch (error) {
+        //     console.error("Error:", error);
+        // }
     };
     return (
         <Grid>
@@ -63,7 +92,7 @@ const SearchArea = () => {
                                     placeholder="Location"
                                     // size='small'
                                     id="outlined-select-city"
-                                    value={location}
+                                    value={locationInfo}
                                     name='location'
                                     onChange={handleLocationChange}
                                 >

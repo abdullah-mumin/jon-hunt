@@ -1,6 +1,6 @@
 import { Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navigation from '../Navigation/Navigation';
 import Footer from '../Footer/Footer';
 import { BsFillCalendarMinusFill } from 'react-icons/bs';
@@ -12,6 +12,8 @@ import { AiFillUnlock } from 'react-icons/ai';
 import location from '../../Images/Job/location.jpg';
 import Modal from '@mui/material/Modal';
 import FileBase64 from 'react-file-base64';
+import Message from '../../Component/Message/Message';
+import Loader from '../../Component/Loader/Loader';
 
 const style = {
     position: 'absolute',
@@ -27,16 +29,79 @@ const style = {
 
 const JobDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const [message, setMessage] = useState('');
     const [open, setOpen] = useState(false);
-    const handleOpen = () => {
-        setOpen(true)
-    };
     const handleClose = () => {
         setOpen(false)
     };
 
+    const handleOpen = () => {
+        setOpen(true);
+        setTimeout(() => handleClose(), 3000);
+        // message.message === 'Successfully Applied' ? navigate(`/`) : navigate(`/job-details/${id}`);
+    };
+
+    //Modal
+    const [opens, setOpens] = useState(false);
+
+    const onOpenModal = () => {
+        setOpens(true);
+        // setTimeout(() => onCloseModal(), 3000);
+    };
+    const onCloseModal = () => {
+        setOpens(false);
+    };
+
+    const [name, setName] = useState('');
+    const handleNameChange = (e) => {
+        setName(e.target.value);
+    };
+    const [number, setNumber] = useState('');
+    const handleNumberChange = (e) => {
+        setNumber(e.target.value);
+    };
+    const [email, setEmail] = useState('');
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+    };
+    const [experience, setExperience] = useState('');
+    const handleExperienceChange = (e) => {
+        setExperience(e.target.value);
+    };
+    const [letter, setLetter] = useState('');
+    const handleLetterChange = (e) => {
+        setLetter(e.target.value);
+    };
+
+    const [loading, setLoading] = useState(false);
+    const [jobInfo, setJobInfo] = useState([]);
+    useEffect(() => {
+        setLoading(true);
+        fetch(`https://talent-hustle-server.vercel.app/search/${id}`, {
+        })
+            .then(res => res.json())
+            .then(data => {
+                setJobInfo(data);
+                setLoading(false);
+            })
+    }, []);
+    // console.log(jobInfo);
+    
+
+    const [userData, setUserData] = useState([]);
+    useEffect(() => {
+        let interval = setInterval(() => {
+            if (userData) {
+                const updateInfo = JSON.parse(localStorage.getItem('userInfo'));
+                setUserData(updateInfo || []);
+            }
+        }, 200)
+        return () => clearInterval(interval);
+    }, []);
+
     const [url, setUrl] = React.useState('');
-    const [item, setItem] = useState({ image: '' });
+    const [item, setItem] = useState({ cv: '' });
 
     // Handle the `onChange` event of the `file` input
     const onChange = (e) => {
@@ -44,7 +109,64 @@ const JobDetails = () => {
         files.length > 0 && setUrl(URL.createObjectURL(files[0]));
         console.log(files);
     };
-    console.log(item);
+    // console.log(item);
+
+
+    const hanldeApply = async (e) => {
+        onCloseModal();
+        const info = {
+            'name': name,
+            'email': userData?.email,
+            'title' : jobInfo?.title,
+            'cvEmail' : email,
+            'companyEmail': jobInfo.companyEmail,
+            'number': number,
+            'letter': letter,
+            'experience': experience,
+            'cv': item?.cv
+        }
+        try {
+            setLoading(true);
+            const response = await fetch(`https://talent-hustle-server.vercel.app/apply`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(info),
+            });
+            const result = await response.json();
+            setLoading(false);
+            if (result.message === 'Successful') {
+                setName('');
+                setNumber('');
+                setEmail('');
+                setExperience('');
+                setLetter('');
+                const addonMessage = {
+                    message: 'Successfully Applied'
+                };
+                setMessage(addonMessage);
+                handleOpen();
+                setLoading(false);
+            }
+            else if (result.message === 'Failed') {
+                setName('');
+                setNumber('');
+                setEmail('');
+                setExperience('');
+                setLetter('');
+                const addonMessage = {
+                    message: 'Failed Application. Try again...'
+                };
+                setMessage(addonMessage);
+                handleOpen();
+                setLoading(false);
+            }
+            // console.log("Success:", result);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
 
     return (
         <>
@@ -69,10 +191,10 @@ const JobDetails = () => {
                                                 <Grid sx={{ padding: '20px' }}>
                                                     <Grid>
                                                         <Typography sx={{ fontSize: '18px', fontWeight: '600' }}>
-                                                            Quality Assurance Analyst
+                                                            {jobInfo?.title}
                                                         </Typography>
                                                         <Typography sx={{ fontSize: '15px', marginBottom: '10px', marginTop: '5px' }}>
-                                                            Job Type : Remote
+                                                            Job Type : {jobInfo?.jobCategory}
                                                         </Typography>
                                                         <Grid
                                                             container
@@ -93,7 +215,7 @@ const JobDetails = () => {
                                                                             >
                                                                                 <BsFillCalendarMinusFill style={{ fontSize: '15px', marginBottom: '2px', marginRight: '5px' }} />
                                                                                 <Typography sx={{ fontSize: '13px' }}>
-                                                                                    Full Time
+                                                                                    {jobInfo?.jobType}
                                                                                 </Typography>
                                                                             </Grid>
                                                                         </Grid>
@@ -107,7 +229,7 @@ const JobDetails = () => {
                                                                             >
                                                                                 <GrCurrency style={{ fontSize: '15px', marginBottom: '1px', marginRight: '5px' }} />
                                                                                 <Typography sx={{ fontSize: '13px' }}>
-                                                                                    $2000 - $2100
+                                                                                    ${jobInfo?.minSalary} - ${jobInfo?.maxSalary}
                                                                                 </Typography>
                                                                             </Grid>
                                                                         </Grid>
@@ -187,23 +309,7 @@ const JobDetails = () => {
                                                     <Grid>
                                                         <Grid>
                                                             <Typography sx={{ fontSize: '15px' }}>
-                                                                Lorem ipsum dolor sit amet consectetur. Quam libero consequat
-                                                                sagittis pellentesque proin curabitur donec aenean consectetur.
-                                                                Gravida lobortis feugiat feugiat ultricies integer magna ipsum sa
-                                                                gittis et. At lorem purus in et. Nibh ultrices dui orci habitasse tem
-                                                                pus nisi sit cras sollicitudin. Nunc auctor sit sit a phasellus males
-                                                                uada. Feugiat aliquet gravida id tortor leo morbi nisl molestie eget.
-                                                                In pellentesque nisl auctor facilisis massa ac venenatis tortor a. Pu
-                                                                rus diam proin bibendum nulla. At iaculis dui duis commodo lectus
-                                                                tristique dictum justo tincidunt. Consectetur sit lectus libero felis.
-                                                                Tellus proin nunc vitae et at placerat varius et aenean. Auctor massa
-                                                                viverra aliquam purus nunc enim adipiscing. Faucibus hac non eu id.
-                                                                Nisi viverra aliquam nisi tincidunt in ut lacinia. Lacus sed tempor viver
-                                                                ra ac ultrices pretium quam. Lacus eget aliquam sapien nibh in cras. T
-                                                                urpis dolor sapien leo tempor enim non pretium. Quisque et viverra
-                                                                auctor diam. Sapien cras nullam aliquet justo aliquet diam. Amet vol
-                                                                utpat pharetra mollis orci eget a sed consequat. Etiam mattis ultrices
-                                                                ullamcorper neque duis facilisis egestas sit.
+                                                                {jobInfo?.description}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid
@@ -261,7 +367,7 @@ const JobDetails = () => {
                                             <Grid sx={{ marginTop: '20px', marginBottom: '10px' }}>
                                                 <Grid>
                                                     <Typography sx={{ fontSize: '18px', fontWeight: '600' }}>
-                                                        IT Recruitment LTD
+                                                        {jobInfo?.companyName}
                                                     </Typography>
                                                 </Grid>
                                                 <Grid sx={{ marginTop: '10px' }}>
@@ -271,7 +377,7 @@ const JobDetails = () => {
                                                     >
                                                         <GoLocation style={{ fontSize: '15px', marginBottom: '2px', marginRight: '5px' }} />
                                                         <Typography sx={{ fontSize: '15px' }}>
-                                                            New York , Casborn
+                                                            {jobInfo?.location}
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
@@ -282,7 +388,7 @@ const JobDetails = () => {
                                                     >
                                                         <BiTimeFive style={{ fontSize: '15px', marginBottom: '2px', marginRight: '5px' }} />
                                                         <Typography sx={{ fontSize: '15px' }}>
-                                                            Full Time
+                                                            {jobInfo?.jobType}
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
@@ -293,7 +399,7 @@ const JobDetails = () => {
                                                     >
                                                         <AiFillUnlock style={{ fontSize: '15px', marginBottom: '2px', marginRight: '5px' }} />
                                                         <Typography sx={{ fontSize: '15px' }}>
-                                                            20/03/2023
+                                                            {jobInfo?.date}
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
@@ -304,7 +410,7 @@ const JobDetails = () => {
                                                     >
                                                         <GrCurrency style={{ fontSize: '15px', marginBottom: '2px', marginRight: '5px' }} />
                                                         <Typography sx={{ fontSize: '15px' }}>
-                                                            $2000 - 2100 Per month
+                                                            ${jobInfo?.minSalary} - {jobInfo?.maxSalary} Per month
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
@@ -322,7 +428,7 @@ const JobDetails = () => {
                                         </Grid>
                                         <Grid sx={{ backgroundColor: '#291F78', textAlign: 'center', padding: '5px 0px' }}>
                                             <Button
-                                                onClick={handleOpen}
+                                                onClick={onOpenModal}
                                                 variant='contained' style={{
                                                     color: 'white', textTransform: 'none', fontSize: '17px', borderRadius: '10px', backgroundColor: '#291F78', width: '100%', ':hover': {
                                                         bgcolor: '#291F78',
@@ -339,6 +445,9 @@ const JobDetails = () => {
                     </Container>
                 </Grid>
             </Grid>
+            {
+                loading && <Loader />
+            }
             {/* <Grid>
                 {
                     item !== null ?
@@ -356,8 +465,8 @@ const JobDetails = () => {
             </Grid> */}
             <Footer />
             <Modal
-                open={open}
-                onClose={handleClose}
+                open={opens}
+                onClose={onCloseModal}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -376,6 +485,8 @@ const JobDetails = () => {
                                         borderRadius: '5px',
                                     },
                                 }}
+                                value={name}
+                                onChange={handleNameChange}
                                 placeholder='Enter your name'
                                 variant="outlined"
                                 size='small'
@@ -391,6 +502,8 @@ const JobDetails = () => {
                                         borderRadius: '5px',
                                     },
                                 }}
+                                value={email}
+                                onChange={handleEmailChange}
                                 placeholder='Enter your email'
                                 variant="outlined"
                                 size='small'
@@ -406,6 +519,8 @@ const JobDetails = () => {
                                         borderRadius: '5px',
                                     },
                                 }}
+                                value={letter}
+                                onChange={handleLetterChange}
                                 placeholder='Enter your cover letter'
                                 variant="outlined"
                                 multiline
@@ -422,6 +537,8 @@ const JobDetails = () => {
                                         borderRadius: '5px',
                                     },
                                 }}
+                                value={number}
+                                onChange={handleNumberChange}
                                 placeholder='Enter your number'
                                 variant="outlined"
                                 size='small'
@@ -432,7 +549,7 @@ const JobDetails = () => {
                                 Upload CV
                             </Typography>
                             <Grid sx={{ marginTop: '5px' }}>
-                                <FileBase64 multiple={false} type="file" onDone={({ base64 }) => setItem({ ...item, image: base64 })} />
+                                <FileBase64 multiple={false} type="file" onDone={({ base64 }) => setItem({ ...item, cv: base64 })} />
                             </Grid>
                         </Grid>
                         <Grid sx={{ marginTop: '10px' }}>
@@ -445,6 +562,8 @@ const JobDetails = () => {
                                         borderRadius: '5px',
                                     },
                                 }}
+                                value={experience}
+                                onChange={handleExperienceChange}
                                 placeholder='How many years of experience ?'
                                 variant="outlined"
                                 size='small'
@@ -452,17 +571,22 @@ const JobDetails = () => {
                         </Grid>
                     </Grid>
                     <Grid sx={{ marginTop: '30px' }}>
-                        <Button variant='contained' style={{
-                            color: 'white', fontSize: '17px', backgroundColor: '#291F78', width: '100%', ':hover': {
-                                bgcolor: '#291F78',
-                                color: 'white',
-                            }
-                        }}>
+                        <Button variant='contained'
+                            onClick={hanldeApply}
+                            style={{
+                                color: 'white', fontSize: '17px', backgroundColor: '#291F78', width: '100%', ':hover': {
+                                    bgcolor: '#291F78',
+                                    color: 'white',
+                                }
+                            }}>
                             SUBMIT APPLICATION
                         </Button>
                     </Grid>
                 </Box>
             </Modal>
+            {
+                open && <Message open={open} onclose={handleClose} message={message} />
+            }
         </>
     );
 };

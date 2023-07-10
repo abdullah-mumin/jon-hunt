@@ -17,7 +17,7 @@ const Footer = () => {
             >
                 <Container>
                     <Grid container spacing={4}>
-                        <Grid item xs={12} sm={6} md={3} marginBottom='10px'>
+                        {/* <Grid item xs={12} sm={6} md={3} marginBottom='10px'>
                             <Box sx={{ fontWeight: '600', fontSize: 25, marginBottom: 2 }}>
                                 JOBHUNT
                             </Box>
@@ -27,10 +27,10 @@ const Footer = () => {
                                 site and earn money in the
                                 process!
                             </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={2} marginBottom='10px'>
-                            <Box sx={{ fontWeight: '500', fontSize: 25, marginBottom: 2 }}>
-                                Site Map
+                        </Grid> */}
+                        <Grid item xs={12} sm={6} md={3} marginBottom='10px'>
+                            <Box sx={{ fontWeight: '500', fontSize: 20, marginBottom: 2 }}>
+                                ABOUT US
                             </Box>
                             <Box sx={{ marginBottom: '10px' }}>
                                 <Link href="/" sx={{
@@ -39,7 +39,7 @@ const Footer = () => {
                                         textDecoration: 'none'
                                     },
                                 }} color="inherit">
-                                    Account
+                                    About Talent Hustle
                                 </Link>
                             </Box>
                             <Box sx={{ marginBottom: '10px' }}>
@@ -49,7 +49,7 @@ const Footer = () => {
                                         textDecoration: 'none'
                                     },
                                 }} color="inherit">
-                                    Manage Jobs
+                                    Terms and Condition
                                 </Link>
                             </Box>
                             <Box sx={{ marginBottom: '10px' }}>
@@ -59,7 +59,7 @@ const Footer = () => {
                                         textDecoration: 'none'
                                     },
                                 }} color="inherit">
-                                    Blog
+                                    International Partner
                                 </Link>
                             </Box>
                             <Box sx={{ marginBottom: '10px' }}>
@@ -69,7 +69,17 @@ const Footer = () => {
                                         textDecoration: 'none'
                                     },
                                 }} color="inherit">
-                                    Post a Job
+                                    Privacy Policy
+                                </Link>
+                            </Box>
+                            <Box sx={{ marginBottom: '10px' }}>
+                                <Link href="/" sx={{
+                                    textDecoration: 'none', '&:hover': {
+                                        color: 'inherit',
+                                        textDecoration: 'none'
+                                    },
+                                }} color="inherit">
+                                    Feedback
                                 </Link>
                             </Box>
                             <Box>
@@ -79,122 +89,104 @@ const Footer = () => {
                                         textDecoration: 'none'
                                     },
                                 }} color="inherit">
-                                    Terms & Service
+                                    Contact us
                                 </Link>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4} marginBottom='10px'>
-                            <Box sx={{ fontWeight: '500', fontSize: 25, marginBottom: 2 }}>
-                                Recent News Articles
-                            </Box>
-                            <Box sx={{ fontSize: 15, marginBottom: 2 }}>
-                                Lorem ipsum dolor sit amet
-                                consectetur. Orci tristique
-                                arcu diam orci nulla. Pulvinar
-                                in quam aliquam malesuad
-                                in faucibus tristique.
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={6} md={3} marginBottom='10px'>
-                            <Box sx={{ fontWeight: '500', fontSize: 25, marginBottom: 2 }}>
-                                JobHunt Offices
+                            <Box sx={{ fontWeight: '500', fontSize: 20, marginBottom: 2 }}>
+                                JOB SEEKERS
                             </Box>
-                            <Box sx={{ fontSize: 15, marginBottom: 1 }}>
-                                Madison Avenue,
+                            <Box sx={{ marginBottom: '10px' }}>
+                                <Link href="/" sx={{
+                                    textDecoration: 'none', '&:hover': {
+                                        color: 'inherit',
+                                        textDecoration: 'none'
+                                    },
+                                }} color="inherit">
+                                    Create Account
+                                </Link>
                             </Box>
-                            <Box sx={{ fontSize: 15, marginBottom: 1 }}>
-                                Suite F-2 Manhattan,
+                            <Box sx={{ marginBottom: '10px' }}>
+                                <Link href="/" sx={{
+                                    textDecoration: 'none', '&:hover': {
+                                        color: 'inherit',
+                                        textDecoration: 'none'
+                                    },
+                                }} color="inherit">
+                                    Career Counseling
+                                </Link>
                             </Box>
-                            <Box sx={{ fontSize: 15 }}>
-                                New York 10282
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3} marginBottom='10px'>
+                            <Box sx={{ fontWeight: '500', fontSize: 20, marginBottom: 2 }}>
+                                EMPLOYEES
                             </Box>
-                            {/* <Box
-                                display='flex'
-                                alignItems='center'
-                                marginBottom='10px'
-                            >
-                                <Box>
-                                    <NavigationIcon></NavigationIcon>
-                                </Box>
-                                <Box
-                                    marginTop='-5px'
-                                    marginLeft='10px'
-                                    marginRight='10px'
-                                >
-                                    <Box>
-                                        <Link sx={{
-                                            textDecoration: 'none', fontSize: '14px', '&:hover': {
-                                                color: 'inherit',
-                                                textDecoration: 'none'
-                                            },
-                                        }} color="inherit">
-                                            Option 3
-                                        </Link>
-                                    </Box>
-                                    <Box sx={{ marginTop: '-6px' }}>
-                                        <Link sx={{
-                                            textDecoration: 'none', fontSize: '14px', '&:hover': {
-                                                color: 'inherit',
-                                                textDecoration: 'none'
-                                            },
-                                        }} color="inherit">
-                                            Option 4
-                                        </Link>
-                                    </Box>
-                                </Box>
+                            <Box sx={{ marginBottom: '10px' }}>
+                                <Link href="/" sx={{
+                                    textDecoration: 'none', '&:hover': {
+                                        color: 'inherit',
+                                        textDecoration: 'none'
+                                    },
+                                }} color="inherit">
+                                    Create Account
+                                </Link>
                             </Box>
-                            <Box>
-                                <Box
-                                    display='flex'
-                                    alignItems='center'
-                                    marginBottom='10px'
-                                >
-                                    <Box>
-                                        <PhoneIcon></PhoneIcon>
-                                    </Box>
-                                    <Box
-                                        marginTop='-5px'
-                                        marginLeft='10px'
-                                        marginRight='10px'
-                                    >
-                                        <Box>
-                                            <Link sx={{
-                                                textDecoration: 'none', fontSize: '14px', '&:hover': {
-                                                    color: 'inherit',
-                                                    textDecoration: 'none'
-                                                },
-                                            }} color="inherit">
-                                                Option 5
-                                            </Link>
-                                        </Box>
-                                    </Box>
-                                </Box>
+                            <Box sx={{ marginBottom: '10px' }}>
+                                <Link href="/" sx={{
+                                    textDecoration: 'none', '&:hover': {
+                                        color: 'inherit',
+                                        textDecoration: 'none'
+                                    },
+                                }} color="inherit">
+                                    Product/Service
+                                </Link>
                             </Box>
-                            <Box>
-                                <Box
-                                    display='flex'
-                                    alignItems='flex-start'
-                                >
-                                    <Box>
-                                        <EmailIcon></EmailIcon>
-                                    </Box>
-                                    <Box>
-                                        <Box
-                                            marginLeft='10px'
-                                            marginRight='10px'
-                                        >
-                                            <Link sx={{
-                                                textDecoration: 'none', fontSize: '15px', '&:hover': {
-                                                    color: 'inherit',
-                                                    textDecoration: 'none'
-                                                },
-                                            }} color="inherit">
-                                                jobhunt@gmail.com
-                                            </Link>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </Box> */}
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3} marginBottom='10px'>
+                            <Box sx={{ fontWeight: '500', fontSize: 20, marginBottom: 2 }}>
+                                TOOLS & SOCIAL MEDIA
+                            </Box>
+                            <Box sx={{ marginBottom: '10px' }}>
+                                <Link href="/" sx={{
+                                    textDecoration: 'none', '&:hover': {
+                                        color: 'inherit',
+                                        textDecoration: 'none'
+                                    },
+                                }} color="inherit">
+                                    FACEBOOK
+                                </Link>
+                            </Box>
+                            <Box sx={{ marginBottom: '10px' }}>
+                                <Link href="/" sx={{
+                                    textDecoration: 'none', '&:hover': {
+                                        color: 'inherit',
+                                        textDecoration: 'none'
+                                    },
+                                }} color="inherit">
+                                    TWITTER
+                                </Link>
+                            </Box>
+                            <Box sx={{ marginBottom: '10px' }}>
+                                <Link href="/" sx={{
+                                    textDecoration: 'none', '&:hover': {
+                                        color: 'inherit',
+                                        textDecoration: 'none'
+                                    },
+                                }} color="inherit">
+                                    GOOGLE+
+                                </Link>
+                            </Box>
+                            <Box sx={{ marginBottom: '10px' }}>
+                                <Link href="/" sx={{
+                                    textDecoration: 'none', '&:hover': {
+                                        color: 'inherit',
+                                        textDecoration: 'none'
+                                    },
+                                }} color="inherit">
+                                    LINKEDIN
+                                </Link>
+                            </Box>
                         </Grid>
                     </Grid>
                     <Grid container spacing={0} sx={{ paddingLeft: 8, paddingRight: 8 }}>

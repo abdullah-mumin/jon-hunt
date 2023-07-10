@@ -37,7 +37,7 @@ const News = () => {
 
     // const [data, setData] = useState([]);
     // useEffect(() => {
-    //     fetch(`http://localhost:5000/job`, {
+    //     fetch(`https://talent-hustle-server.vercel.app/job`, {
     //     })
     //         .then(res => res.json())
     //         .then(data => {

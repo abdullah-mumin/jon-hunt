@@ -10,6 +10,7 @@ import NewsDetails from './Pages/News/NewsDetails';
 import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
 import Profile from './Pages/Candidate/Profile/Profile';
+import Dashboard from './Pages/Employee/Dashboard/Dashboard';
 
 function App() {
   return (
@@ -36,6 +37,8 @@ function App() {
         <Route path='/register' element={<Register />}>
         </Route>
         <Route path='/profile' element={<Profile />}>
+        </Route>
+        <Route path='/company-dashboard/*' element={<Dashboard />}>
         </Route>
       </Routes>
     </>

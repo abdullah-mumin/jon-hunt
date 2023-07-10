@@ -6,14 +6,29 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import login from '../../Images/Login/login.png';
+import Loader from '../../Component/Loader/Loader';
+import Message from '../../Component/Message/Message';
 
 const Login = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     const [flag, setFlag] = useState('');
 
     const handleButtonClick = (id) => {
         setFlag(id);
         // console.log(id);
+    };
+
+    const [message, setMessage] = useState('');
+    const [open, setOpen] = useState(false);
+    const handleClose = () => {
+        setOpen(false);
+        navigate(`/home`);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+        setTimeout(() => handleClose(), 3000);
     };
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -22,9 +37,10 @@ const Login = () => {
             'email': data.email,
             'password': data.password,
             'isCandidate': flag
-        }
+        };
         try {
-            const response = await fetch(`http://localhost:5000/login`, {
+            setLoading(true);
+            const response = await fetch(`https://talent-hustle-server.vercel.app/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -33,9 +49,24 @@ const Login = () => {
             });
 
             const result = await response.json();
-            console.log(result.message);
-            if (result.message == 'Login Successful') {
-                navigate(`/home`);
+            setLoading(true);
+            // console.log(result.message);
+            if (result.message === 'Login Successful') {
+                localStorage.setItem('userInfo', JSON.stringify(result.data));
+                const addonMessage = {
+                    message: 'Successfully Login'
+                };
+                setMessage(addonMessage);
+                handleOpen();
+                setLoading(false);
+            }
+            else if (result.message === 'Login Failed') {
+                const addonMessage = {
+                    message: 'Login Failed!!! Try Again...'
+                };
+                setMessage(addonMessage);
+                handleOpen();
+                setLoading(false);
             }
         } catch (error) {
             console.error("Error:", error);
@@ -71,6 +102,9 @@ const Login = () => {
                                         </Grid>
                                     </Grid>
                                 </Grid>
+                                {
+                                    loading && <Loader />
+                                }
                                 <Grid item md={7.5}>
                                     <Grid sx={{ padding: '71px 20px', borderRadius: '0px 10px 10px 0px', boxShadow: '2', backgroundImage: 'linear-gradient(to right, #FFFFFF, #7697EB)' }}>
                                         <Grid sx={{ textAlign: 'center' }}>
@@ -154,6 +188,9 @@ const Login = () => {
                 </Grid >
             </Grid >
             <Footer />
+            {
+                open && <Message open={open} onclose={handleClose} message={message} />
+            }
         </>
     );
 };

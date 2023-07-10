@@ -5,19 +5,36 @@ import Footer from '../Footer/Footer';
 import { useForm } from "react-hook-form";
 import './Register.css';
 import login from '../../Images/Login/login.png';
+import { useNavigate } from 'react-router-dom';
+import Loader from '../../Component/Loader/Loader';
+import Message from '../../Component/Message/Message';
 
 const Register = () => {
+    const navigate = useNavigate();
     const [flag, setFlag] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleButtonClick = (id) => {
         setFlag(id);
         // console.log(id);
     };
 
+    const [message, setMessage] = useState('');
+    const [open, setOpen] = useState(false);
+    const handleClose = () => {
+        setOpen(false);
+        navigate(`/login`);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+        setTimeout(() => handleClose(), 3000);
+    };
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const onSubmit = async (data) => {
 
-        console.log(data);
+        // console.log(data);
         if (data.password !== data.password2) {
             return
         }
@@ -28,7 +45,8 @@ const Register = () => {
             'isCandidate': flag
         }
         try {
-            const response = await fetch(`http://localhost:5000/register`, {
+            setLoading(true);
+            const response = await fetch(`https://talent-hustle-server.vercel.app/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -37,7 +55,24 @@ const Register = () => {
             });
 
             const result = await response.json();
-            console.log("Success:", result);
+            setLoading(false);
+            // console.log(result.message);
+            if (result.message === 'Register Successful') {
+                const addonMessage = {
+                    message: 'Successfully Registration'
+                };
+                setMessage(addonMessage);
+                handleOpen();
+                setLoading(false);
+            }
+            else if (result.message === 'Register Failed') {
+                const addonMessage = {
+                    message: 'Registration Failed!!! Try Again...'
+                };
+                setMessage(addonMessage);
+                handleOpen();
+                setLoading(false);
+            }
         } catch (error) {
             console.error("Error:", error);
         }
@@ -72,6 +107,9 @@ const Register = () => {
                                         </Grid>
                                     </Grid>
                                 </Grid>
+                                {
+                                    loading && <Loader />
+                                }
                                 <Grid item md={7.5}>
                                     <Grid sx={{ padding: '51px 20px', borderRadius: '0px 10px 10px 0px', boxShadow: '2', backgroundImage: 'linear-gradient(to right, #FFFFFF, #7697EB)' }}>
                                         <Grid sx={{ textAlign: 'center' }}>
@@ -177,6 +215,9 @@ const Register = () => {
                 </Grid >
             </Grid >
             <Footer />
+            {
+                open && <Message open={open} onclose={handleClose} message={message} />
+            }
         </>
     );
 };

@@ -1,12 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AppBar, CssBaseline, makeStyles, Toolbar, useMediaQuery, useTheme } from '@material-ui/core';
-import { Grid, } from '@mui/material';
+import { Avatar, Button, Grid, ListItemIcon, Menu, MenuItem, Typography, } from '@mui/material';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import NavDrawer from '../Navigation/Drawer';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Divider from '@mui/material/Divider';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../Images/home/logo.jpg'
+import logo from '../../Images/home/logo.png'
+import Person from "@mui/icons-material/Person";
+import Logout from "@mui/icons-material/Logout";
+import Loader from '../../Component/Loader/Loader';
+import Message from '../../Component/Message/Message';
+
 
 const useStyles = makeStyles((theme) => ({
     navlinks: {
@@ -15,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
     logo: {
         flexGrow: '1',
-        marginTop: '8px'
+        marginTop: '-5px'
     },
     link: {
         textDecoration: 'none',
@@ -85,6 +90,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Navigation = () => {
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const classes = useStyles();
@@ -100,22 +106,51 @@ const Navigation = () => {
         setAnchorEl(null);
     };
 
+    const [message, setMessage] = useState('');
+    const [messageOpen, setMessageOpen] = useState(false);
+    const handleMessageClose = () => {
+        setMessageOpen(false);
+        navigate(`/profile`);
+    };
+
+    const handleMessageOpen = () => {
+        setMessageOpen(true);
+        setTimeout(() => handleMessageClose(), 3000);
+    };
+
+    const logoutUser = () => {
+        setLoading(true);
+        localStorage.removeItem('userInfo');
+        setLoading(false);
+    };
+
     const handleLogoutUser = () => {
-        // logoutUser();
+        logoutUser();
         navigate('/');
         window.location.reload();
     }
 
-    // const [userData, setUserData] = useState([]);
-    // useEffect(() => {
-    //     let interval = setInterval(() => {
-    //         if (userData) {
-    //             const updateInfo = JSON.parse(localStorage.getItem('userData'));
-    //             setUserData(updateInfo || []);
-    //         }
-    //     }, 200)
-    //     return () => clearInterval(interval);
-    // }, []);
+    const [userData, setUserData] = useState([]);
+    useEffect(() => {
+        let interval = setInterval(() => {
+            if (userData) {
+                const updateInfo = JSON.parse(localStorage.getItem('userInfo'));
+                setUserData(updateInfo || []);
+            }
+        }, 200)
+        return () => clearInterval(interval);
+    }, []);
+
+    // console.log(userData);
+
+    //Profile
+    const handleProfile = () => {
+        navigate('/profile');
+    };
+    const handleDashboard = () => {
+        navigate('/company-dashboard');
+    };
+
 
 
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -125,7 +160,7 @@ const Navigation = () => {
                 <CssBaseline>
                     <Toolbar>
                         <Link to='/' className={classes.logo}>
-                            <img style={{ width: '100px', height: '50px', marginLeft: '20px' }} src={logo} alt="Trektil" />
+                            <img style={{ width: '100px', height: '80px', marginLeft: '20px' }} src={logo} alt="Trektil" />
                         </Link>
 
                         {isMobile ? (
@@ -138,19 +173,19 @@ const Navigation = () => {
                                 justifyContent='flex-end'
                                 textAlign='right'
                                 className={classes.navlinks}>
-                                <Grid item md={6} display='flex' justifyContent='flex-start' marginTop='10px'>
+                                <Grid item md={7} display='flex' justifyContent='flex-start' marginTop='10px'>
                                     {/* <NavLink to='/tour-plan' style={{ textDecoration: 'none' }} className={classes.link1}>
                                                     {t('nOption1')}
                                                 </NavLink> */}
-                                    <NavLink to='/profile' style={{ textDecoration: 'none' }} className={classes.link}>
+                                    <NavLink to='/' style={{ textDecoration: 'none' }} className={classes.link}>
                                         HOME
                                     </NavLink>
                                     <NavLink to='/about' style={{ textDecoration: 'none' }} className={classes.link}>
                                         ABOUT
                                     </NavLink>
-                                    <NavLink to='/jobs' style={{ textDecoration: 'none' }} className={classes.link4}>
+                                    {/* <NavLink to='/jobs' style={{ textDecoration: 'none' }} className={classes.link4}>
                                         JOBS
-                                    </NavLink>
+                                    </NavLink> */}
                                     <NavLink to='/news' style={{ textDecoration: 'none' }} className={classes.link4}>
                                         NEWS
                                     </NavLink>
@@ -158,28 +193,246 @@ const Navigation = () => {
                                         CONTACT
                                     </NavLink>
                                 </Grid>
-                                <Grid item md={6} display='flex' justifyContent='flex-end'
+                                {
+                                    loading && <Loader />
+                                }
+                                <Grid item md={5} display='flex' justifyContent='flex-end'
                                     marginTop='10px'>
-                                    <NavLink to='/login' style={{ textDecoration: 'none' }} className={classes.link5}>
-                                        Login
-                                    </NavLink>
-                                    <NavLink to='/register' style={{ textDecoration: 'none' }} className={classes.link5}>
-                                        Register
-                                    </NavLink>
-                                    {/* <Grid
-                                        display='flex'
-                                        justifyContent='center'
-                                        alignItems='center'
-                                    >
-                                        <Typography sx={{ fontWeight: '600', color: '#646464', fontSize: '16px', marginTop: '4px', }}>{languageName}</Typography>
-                                        <ExpandMoreIcon onClick={handleOpen} style={{ color: '#646464', marginTop: '8px', }} />
-                                    </Grid> */}
+                                    {
+                                        userData.length !== 0 ?
+                                            <>
+                                                {
+                                                    userData && userData?.isCandidate === '1' ?
+                                                        <>
+                                                            <Button
+                                                                onClick={handleClick}
+                                                                size="small"
+                                                                sx={{
+                                                                    ml: 1, color: 'black', textTransform: 'none', '&:hover': {
+                                                                        bgcolor: 'white',
+                                                                        color: 'black',
+                                                                    },
+                                                                    '&:focus': {
+                                                                        color: 'white',
+                                                                        bgcolor: 'white'
+                                                                    },
+                                                                }}
+                                                                aria-controls={open ? "account-menu" : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={open ? "true" : undefined}
+                                                            >
+                                                                <Avatar sx={{ width: 30, height: 30, boxShadow: '2' }}>{userData?.name[0]}</Avatar>
+                                                            </Button>
+                                                            <Grid
+                                                                alignItems='center'
+                                                                textAlign='start'
+                                                            >
+                                                                <Typography sx={{ fontWeight: '600', color: 'black', marginTop: '12px', fontSize: '16px' }}>{userData?.name}</Typography>
+                                                                <Typography sx={{ color: 'black', fontSize: '12px', marginTop: '-5px', }}>{userData?.email}</Typography>
+                                                            </Grid>
+                                                            <Menu
+                                                                anchorEl={anchorEl}
+                                                                id="account-menu"
+                                                                open={opens}
+                                                                onClose={handleCloses}
+                                                                onClick={handleCloses}
+                                                                PaperProps={{
+                                                                    elevation: 0,
+                                                                    sx: {
+                                                                        overflow: "visible",
+                                                                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                                                                        mt: 1.5,
+                                                                        "& .MuiAvatar-root": {
+                                                                            width: 32,
+                                                                            height: 32,
+                                                                            ml: -0.5,
+                                                                            mr: 1
+                                                                        },
+                                                                        "&:before": {
+                                                                            content: '""',
+                                                                            display: "block",
+                                                                            position: "absolute",
+                                                                            top: 0,
+                                                                            right: 14,
+                                                                            width: 10,
+                                                                            height: 10,
+                                                                            bgcolor: "background.paper",
+                                                                            transform: "translateY(-50%) rotate(45deg)",
+                                                                            zIndex: 0
+                                                                        }
+                                                                    }
+                                                                }}
+                                                                transformOrigin={{ horizontal: "left", vertical: "top" }}
+                                                                anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+                                                            >
+                                                                <MenuItem
+                                                                    onClick={handleProfile}
+                                                                    sx={{
+                                                                        '&.hover': {
+                                                                            backgroundColor: 'red'
+                                                                        },
+                                                                    }}>
+                                                                    <ListItemIcon>
+                                                                        <Person sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                    </ListItemIcon>
+                                                                    Profile
+                                                                </MenuItem>
+                                                                {/* <MenuItem
+                                                                                onClick={handleNote}
+                                                                            >
+                                                                                <ListItemIcon>
+                                                                                    <NoteAltIcon sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                                </ListItemIcon>
+                                                                                Keep Note
+                                                                            </MenuItem> */}
+                                                                {/* <MenuItem>
+                                                                                <ListItemIcon>
+                                                                                    <FavoriteIcon sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                                </ListItemIcon>
+                                                                                My favourite place
+                                                                            </MenuItem>
+                                                                            <MenuItem>
+                                                                                <ListItemIcon>
+                                                                                    <Settings sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                                </ListItemIcon>
+                                                                                Settings
+                                                                            </MenuItem> */}
+                                                                <MenuItem
+                                                                    onClick={handleLogoutUser}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <Logout sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                    </ListItemIcon>
+                                                                    Logout
+                                                                </MenuItem>
+                                                            </Menu>
+                                                        </>
+                                                        :
+                                                        <>
+                                                            <Button
+                                                                onClick={handleClick}
+                                                                size="small"
+                                                                sx={{
+                                                                    ml: 1, color: 'black', textTransform: 'none', '&:hover': {
+                                                                        bgcolor: 'white',
+                                                                        color: 'black',
+                                                                    },
+                                                                    '&:focus': {
+                                                                        color: 'white',
+                                                                        bgcolor: 'white'
+                                                                    },
+                                                                }}
+                                                                aria-controls={open ? "account-menu" : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={open ? "true" : undefined}
+                                                            >
+                                                                <Avatar sx={{ width: 30, height: 30, boxShadow: '2' }}>{userData?.name[0]}</Avatar>
+                                                            </Button>
+                                                            <Grid
+                                                                alignItems='center'
+                                                                textAlign='start'
+                                                            >
+                                                                <Typography sx={{ fontWeight: '600', color: 'black', marginTop: '12px', fontSize: '16px' }}>{userData?.name}</Typography>
+                                                                <Typography sx={{ color: 'black', fontSize: '12px', marginTop: '-5px', }}>{userData?.email}</Typography>
+                                                            </Grid>
+                                                            <Menu
+                                                                anchorEl={anchorEl}
+                                                                id="account-menu"
+                                                                open={opens}
+                                                                onClose={handleCloses}
+                                                                onClick={handleCloses}
+                                                                PaperProps={{
+                                                                    elevation: 0,
+                                                                    sx: {
+                                                                        overflow: "visible",
+                                                                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                                                                        mt: 1.5,
+                                                                        "& .MuiAvatar-root": {
+                                                                            width: 32,
+                                                                            height: 32,
+                                                                            ml: -0.5,
+                                                                            mr: 1
+                                                                        },
+                                                                        "&:before": {
+                                                                            content: '""',
+                                                                            display: "block",
+                                                                            position: "absolute",
+                                                                            top: 0,
+                                                                            right: 14,
+                                                                            width: 10,
+                                                                            height: 10,
+                                                                            bgcolor: "background.paper",
+                                                                            transform: "translateY(-50%) rotate(45deg)",
+                                                                            zIndex: 0
+                                                                        }
+                                                                    }
+                                                                }}
+                                                                transformOrigin={{ horizontal: "left", vertical: "top" }}
+                                                                anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+                                                            >
+                                                                <MenuItem
+                                                                    onClick={handleDashboard}
+                                                                    sx={{
+                                                                        '&.hover': {
+                                                                            backgroundColor: 'red'
+                                                                        },
+                                                                    }}>
+                                                                    <ListItemIcon>
+                                                                        <Person sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                    </ListItemIcon>
+                                                                    Dashboard
+                                                                </MenuItem>
+                                                                {/* <MenuItem
+                                                                                onClick={handleNote}
+                                                                            >
+                                                                                <ListItemIcon>
+                                                                                    <NoteAltIcon sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                                </ListItemIcon>
+                                                                                Keep Note
+                                                                            </MenuItem> */}
+                                                                {/* <MenuItem>
+                                                                                <ListItemIcon>
+                                                                                    <FavoriteIcon sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                                </ListItemIcon>
+                                                                                My favourite place
+                                                                            </MenuItem>
+                                                                            <MenuItem>
+                                                                                <ListItemIcon>
+                                                                                    <Settings sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                                </ListItemIcon>
+                                                                                Settings
+                                                                            </MenuItem> */}
+                                                                <MenuItem
+                                                                    onClick={handleLogoutUser}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <Logout sx={{ color: '#A10F0F' }} fontSize="small" />
+                                                                    </ListItemIcon>
+                                                                    Logout
+                                                                </MenuItem>
+                                                            </Menu>
+                                                        </>
+                                                }
+                                            </>
+                                            :
+                                            <>
+                                                <NavLink to='/login' style={{ textDecoration: 'none' }} className={classes.link5}>
+                                                    Login
+                                                </NavLink>
+                                                <NavLink to='/register' style={{ textDecoration: 'none' }} className={classes.link5}>
+                                                    Register
+                                                </NavLink>
+                                            </>
+                                    }
                                 </Grid>
                             </Grid>
                         )}
                     </Toolbar>
                 </CssBaseline>
             </AppBar>
+            {
+                messageOpen && <Message open={messageOpen} onclose={handleMessageClose} message={message} />
+            }
         </>
     );
 };
